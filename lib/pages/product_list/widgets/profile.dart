@@ -1,12 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/cart/cart_page.dart';
 import 'package:flutter_application_1/pages/login/login_page.dart';
-import 'package:flutter_application_1/pages/product_detail/product_detail_page.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/data.utils.dart';
 import 'package:flutter_application_1/providers/auth_provider.dart';
 import 'package:flutter_application_1/providers/product_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/product_image.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userid;
@@ -49,6 +49,7 @@ class ProfilePage extends StatelessWidget {
                   const Icon(
                     Icons.person,
                     size: 100,
+                    color: Color.fromRGBO(119, 119, 119, 0.196),
                   ),
                   const SizedBox(width: 30),
                   Expanded(
@@ -56,7 +57,7 @@ class ProfilePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                         Text(
-                          '사용자 이름:',
+                          '사용자 ID :',
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -96,43 +97,95 @@ class ProfilePage extends StatelessWidget {
                         itemCount: favoriteProducts.length,
                         itemBuilder: (context, index) {
                           final product = favoriteProducts[index];
-                          return ListTile(
-                            leading: CachedNetworkImage(
-                              imageUrl: product.imageUrl,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.broken_image, size: 50),
-                            ),
-                            title: Text(product.name),
-                            subtitle: Text('${product.price} 만원'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                Provider.of<ProductProvider>(context,
-                                        listen: false)
-                                    .removeFavorite(product);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text('"${product.name}" 찜 목록에서 제거됨'),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                              },
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductDetailPage(product: product),
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                ProductImage(product: product),
+                                const SizedBox(width: 20),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.name,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(product.brand.name,
+                                            style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 15)),
+                                        const SizedBox(width: 10),
+                                        Text('|',
+                                            style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 15)),
+                                        const SizedBox(width: 10),
+                                        Text(product.grade.name,
+                                            style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 15)),
+                                      ],
+                                    ),
+                                    Text(
+                                      DataUtils.calcToWon(product.price),
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
+                                const Spacer(),
+                                IconButton(
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
+                                  onPressed: () {
+                                    showCupertinoDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CupertinoAlertDialog(
+                                          title: const Text('상품 삭제'),
+                                          content: Text('찜 목록에서 삭제하시겠습니까?'),
+                                          actions: [
+                                            CupertinoDialogAction(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('취소'),
+                                            ),
+                                            CupertinoDialogAction(
+                                              onPressed: () {
+                                                Provider.of<ProductProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .removeFavorite(product);
+                                                Navigator.of(context).pop();
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        '"${product.name}" 찜 목록에서 제거됨'),
+                                                    duration: const Duration(
+                                                        seconds: 2),
+                                                  ),
+                                                );
+                                              },
+                                              isDestructiveAction: true,
+                                              child: const Text('삭제'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           );
                         },
                       ),
@@ -176,7 +229,7 @@ class ProfilePage extends StatelessWidget {
                               );
                             },
                             child: const Text(
-                              '로그아웃',
+                              '예',
                               style: TextStyle(color: Colors.red),
                             ),
                           ),

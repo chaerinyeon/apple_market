@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// lib/product_widgets/product_tile.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/product_list/product/product.dart';
-import 'package:flutter_application_1/providers/product_provider.dart';
-import 'package:provider/provider.dart';
-
+import 'package:flutter_application_1/pages/product_list/widgets/data.utils.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/product_image.dart';
 import '../../product_detail/product_detail_page.dart';
 
 class ProductTile extends StatelessWidget {
@@ -13,70 +13,70 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-      child: ListTile(
-        leading: CachedNetworkImage(
-          imageUrl: product.imageUrl,
-          width: 50,
-          height: 50,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => const CircularProgressIndicator(),
-          errorWidget: (context, url, error) =>
-              const Icon(Icons.broken_image, size: 50),
-        ),
-        title: Row(children: [
-          Text(
-            product.name,
-            style: const TextStyle(
-              fontSize: 20,
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailPage(product: product),
           ),
-          const Spacer(),
-          Text(
-            '${product.price} 만원',
-            style: const TextStyle(fontSize: 15, color: Colors.black54),
-          ),
-        ]),
-        trailing: Consumer<ProductProvider>(
-          builder: (context, productProvider, child) {
-            final isFavorited =
-                productProvider.favoriteProducts.contains(product);
-            return IconButton(
-              icon: Icon(
-                isFavorited ? Icons.favorite : Icons.favorite_border,
-                color: isFavorited ? Colors.red : Colors.grey,
+        );
+      },
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              ProductImage(product: product),
+              const SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(product.brand.name,
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 15)),
+                      const SizedBox(width: 10),
+                      Text('|',
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 15)),
+                      const SizedBox(width: 10),
+                      Text(product.grade.name,
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 15)),
+                      const SizedBox(width: 10),
+                      Text('|',
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 15)),
+                      const SizedBox(width: 10),
+                      Icon(Icons.favorite_outline,
+                          color: Colors.black54, size: 15),
+                      const SizedBox(width: 5),
+                      Text(product.likeCount.toString(),
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 15)),
+                    ],
+                  ),
+                  Text(
+                    DataUtils.calcToWon(product.price),
+                    style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              onPressed: () {
-                if (isFavorited) {
-                  productProvider.removeFavorite(product);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('"${product.name}" 찜 목록에서 제거됨'),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                } else {
-                  productProvider.addFavorite(product);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('"${product.name}" 찜 됨'),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-            );
-          },
+            ],
+          ),
         ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductDetailPage(product: product),
-            ),
-          );
-        },
       ),
     );
   }

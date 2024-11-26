@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/data.utils.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/product_image.dart';
 import 'package:flutter_application_1/providers/product_provider.dart';
 import 'package:provider/provider.dart';
-
-import '../product_detail/product_detail_page.dart';
+import 'package:flutter/cupertino.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -20,52 +20,104 @@ class CartPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('장바구니'),
       ),
-      body: cartProducts.isEmpty
-          ? const Center(
-              child: Text('장바구니 상품이 없습니다.'),
-            )
-          : ListView.builder(
-              itemCount: cartProducts.length,
-              itemBuilder: (context, index) {
-                final product = cartProducts[index];
-                return ListTile(
-                  leading: CachedNetworkImage(
-                    imageUrl: product.imageUrl,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.broken_image, size: 50),
-                  ),
-                  title: Text(product.name),
-                  subtitle: Text('${product.price} 만원'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      Provider.of<ProductProvider>(context, listen: false)
-                          .removeCart(product);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('"${product.name}" 장바구니 목록에서 제거됨'),
-                          duration: const Duration(seconds: 2),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: cartProducts.isEmpty
+            ? const Center(
+                child: Text('장바구니 상품이 없습니다.'),
+              )
+            : ListView.builder(
+                itemCount: cartProducts.length,
+                itemBuilder: (context, index) {
+                  final product = cartProducts[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        ProductImage(product: product),
+                        const SizedBox(width: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(product.brand.name,
+                                    style: TextStyle(
+                                        color: Colors.black54, fontSize: 15)),
+                                const SizedBox(width: 10),
+                                Text('|',
+                                    style: TextStyle(
+                                        color: Colors.black54, fontSize: 15)),
+                                const SizedBox(width: 10),
+                                Text(product.grade.name,
+                                    style: TextStyle(
+                                        color: Colors.black54, fontSize: 15)),
+                              ],
+                            ),
+                            Text(
+                              DataUtils.calcToWon(product.price),
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProductDetailPage(product: product),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            showCupertinoDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CupertinoAlertDialog(
+                                  title: const Text('상품 삭제'),
+                                  content: Text('장바구니에서 삭제하시겠습니까?'),
+                                  actions: [
+                                    CupertinoDialogAction(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('취소'),
+                                    ),
+                                    CupertinoDialogAction(
+                                      onPressed: () {
+                                        Provider.of<ProductProvider>(context,
+                                                listen: false)
+                                            .removeCart(product);
+                                        Navigator.of(context).pop();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                '"${product.name}" 장바구니 목록에서 제거됨'),
+                                            duration:
+                                                const Duration(seconds: 2),
+                                          ),
+                                        );
+                                      },
+                                      isDestructiveAction: true, // 빨간색으로 표시
+                                      child: const Text('삭제'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+      ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
@@ -80,14 +132,17 @@ class CartPage extends StatelessWidget {
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              '총 금액: $totalPrice 만원',
+              '총 금액: ${DataUtils.calcToWon(totalPrice)}',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            SizedBox(
+              width: 5,
             ),
             ElevatedButton(
               onPressed: cartProducts.isEmpty
@@ -105,7 +160,6 @@ class CartPage extends StatelessWidget {
                   horizontal: 32,
                   vertical: 16,
                 ),
-                backgroundColor: Colors.blue,
               ),
               child: const Text(
                 '결제하기',

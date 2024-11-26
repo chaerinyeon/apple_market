@@ -1,40 +1,59 @@
 // lib/providers/product_provider.dart
 
 import 'package:flutter/foundation.dart';
-
-import '../pages/product_list/product/product.dart';
+import 'package:flutter_application_1/pages/product_list/product/product.dart';
 
 class ProductProvider with ChangeNotifier {
   int _currentID = 1;
   List<Product> _products = [
     Product(
         id: 10000000,
-        name: '아이폰',
-        price: 120,
+        name: '아이폰12 mini',
+        price: 1200000,
         brand: PhoneBrand.iPhone,
-        imageUrl:
-            'https://kream-phinf.pstatic.net/MjAyMzEwMTFfMjE2/MDAxNjk2OTg4MzIwOTE0.dg6UAYIYf5oa8XlYs8XJMLoLeFgcgX9le6x_hprkZUwg.MxmZvpMu_raB8BjVx8VGGimyxGwp4ojOryS8dBYXJ-gg.JPEG/a_28596be85bbd44a0b89702b95c060fb6.jpg?type=l_webp'),
+        imageUrl: 'assets/images/i_phone1.jpg',
+        grade: PhoneGrade.UNOPENED,
+        likeCount: 2),
     Product(
         id: 200000000,
-        name: '삼성폴더폰',
-        price: 12,
+        name: '갤럭시 s23',
+        price: 550000,
         brand: PhoneBrand.Samsung,
-        imageUrl:
-            'https://kream-phinf.pstatic.net/MjAyMzEwMTFfMjE2/MDAxNjk2OTg4MzIwOTE0.dg6UAYIYf5oa8XlYs8XJMLoLeFgcgX9le6x_hprkZUwg.MxmZvpMu_raB8BjVx8VGGimyxGwp4ojOryS8dBYXJ-gg.JPEG/a_28596be85bbd44a0b89702b95c060fb6.jpg?type=l_webp'),
+        imageUrl: 'assets/images/sam_phone1.jpg',
+        grade: PhoneGrade.B_GRADE,
+        likeCount: 6),
     Product(
         id: 300000000,
-        name: '삼성폴더폰',
-        price: 12,
-        brand: PhoneBrand.Samsung,
-        imageUrl:
-            'https://kream-phinf.pstatic.net/MjAyMzEwMTFfMjE2/MDAxNjk2OTg4MzIwOTE0.dg6UAYIYf5oa8XlYs8XJMLoLeFgcgX9le6x_hprkZUwg.MxmZvpMu_raB8BjVx8VGGimyxGwp4ojOryS8dBYXJ-gg.JPEG/a_28596be85bbd44a0b89702b95c060fb6.jpg?type=l_webp'),
+        name: '아이폰 13프로',
+        price: 750000,
+        brand: PhoneBrand.iPhone,
+        imageUrl: 'assets/images/i_phone2.jpeg',
+        grade: PhoneGrade.S_GRADE,
+        likeCount: 10),
     Product(
         id: 40000000,
-        name: '삼성폴더폰',
-        price: 12,
+        name: '플립4 박스 올갈이',
+        price: 380000,
         brand: PhoneBrand.Samsung,
-        imageUrl:
-            'https://kream-phinf.pstatic.net/MjAyMzEwMTFfMjE2/MDAxNjk2OTg4MzIwOTE0.dg6UAYIYf5oa8XlYs8XJMLoLeFgcgX9le6x_hprkZUwg.MxmZvpMu_raB8BjVx8VGGimyxGwp4ojOryS8dBYXJ-gg.JPEG/a_28596be85bbd44a0b89702b95c060fb6.jpg?type=l_webp')
+        imageUrl: 'assets/images/sam_phone2.jpg',
+        grade: PhoneGrade.A_GRADE,
+        likeCount: 7),
+    Product(
+        id: 50000000,
+        name: '플립5 512g 팝니다',
+        price: 450000,
+        brand: PhoneBrand.Samsung,
+        imageUrl: 'assets/images/sam_phone3.jpg',
+        grade: PhoneGrade.A_GRADE,
+        likeCount: 11),
+    Product(
+        id: 60000000,
+        name: '갤럭시 울트라',
+        price: 670000,
+        brand: PhoneBrand.Samsung,
+        imageUrl: 'assets/images/sam_phone4.jpg',
+        grade: PhoneGrade.B_GRADE,
+        likeCount: 11),
   ];
 
 // _로 시작하는건 외부에서 접근 불가. 클래스 내부에서만 사용
@@ -68,6 +87,8 @@ class ProductProvider with ChangeNotifier {
     required int price,
     required String imageUrl,
     required PhoneBrand brand,
+    required PhoneGrade grade,
+    required int likeCount,
   }) {
     final newProduct = Product(
       id: _currentID,
@@ -75,6 +96,8 @@ class ProductProvider with ChangeNotifier {
       price: price,
       imageUrl: imageUrl,
       brand: brand,
+      grade: grade,
+      likeCount: likeCount,
     );
     _products.add(newProduct);
     _currentID++;

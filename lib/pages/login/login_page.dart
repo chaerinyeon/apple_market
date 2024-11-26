@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/product_list/product_list_page.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../register/register_page.dart';
-import '../product_list/product_list_page.dart';
 import 'widgets/input_field.dart';
 import 'widgets/loading_indicator.dart';
 import 'widgets/form_button.dart';
@@ -92,19 +92,23 @@ class _LoginPageState extends State<LoginPage> {
         child: ListView(
           children: [
             SizedBox(height: screenHeight * .12),
-            const Text(
-              '환영합니다,',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+            Center(
+              child: const Text(
+                '환영합니다',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: screenHeight * .01),
-            Text(
-              '로그인 해주세요!',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black.withOpacity(.6),
+            Center(
+              child: Text(
+                '로그인을 해주세요!',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black.withOpacity(.6),
+                ),
               ),
             ),
             SizedBox(height: screenHeight * .12),

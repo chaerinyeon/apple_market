@@ -1,30 +1,32 @@
-// ignore_for_file: library_private_types_in_public_api
+// lib/pages/product_list/project_list_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/add_product/add_product_page.dart';
+import 'package:flutter_application_1/pages/cart/cart_page.dart';
 import 'package:flutter_application_1/pages/product_list/product/product.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/filter_dropdown.dart';
 
-import '../../providers/product_provider.dart';
-import '../add_product/add_product_page.dart';
-import '../cart/cart_page.dart';
-import 'widgets/brand_dropdown.dart';
-import 'widgets/product_title.dart';
-import 'widgets/profile.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/product_title.dart';
+import 'package:flutter_application_1/pages/product_list/widgets/profile.dart';
+import 'package:flutter_application_1/providers/product_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key});
 
   @override
-  _ProductListPageState createState() => _ProductListPageState();
+  // ignore: library_private_types_in_public_api
+  _ProjectListPageState createState() => _ProjectListPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage> {
+class _ProjectListPageState extends State<ProductListPage> {
   PhoneBrand? _selectedBrand;
+  PhoneGrade? _selectedGrade;
   String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
-    // 상품 목록 가져오기
+    //상품 목록 가져오기
     final productProvider = Provider.of<ProductProvider>(context);
     final products = productProvider.products;
 
@@ -44,6 +46,9 @@ class _ProductListPageState extends State<ProductListPage> {
         actions: <Widget>[
           IconButton(
             onPressed: () {
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   const SnackBar(content: Text('장바구니 버튼 클릭됨')),
+              // );
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CartPage()),
@@ -86,13 +91,20 @@ class _ProductListPageState extends State<ProductListPage> {
               },
             ),
           ),
+          SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: BrandDropdown(
+            child: FilterDropdown(
               selectedBrand: _selectedBrand,
-              onChanged: (PhoneBrand? newBrand) {
+              selectedGrade: _selectedGrade,
+              onBrandChanged: (PhoneBrand? newBrand) {
                 setState(() {
                   _selectedBrand = newBrand;
+                });
+              },
+              onGradeChanged: (PhoneGrade? newGrade) {
+                setState(() {
+                  _selectedGrade = newGrade;
                 });
               },
             ),
@@ -110,6 +122,10 @@ class _ProductListPageState extends State<ProductListPage> {
                           product.brand != _selectedBrand) {
                         return const SizedBox.shrink();
                       }
+                      if (_selectedGrade != null &&
+                          product.grade != _selectedGrade) {
+                        return const SizedBox.shrink();
+                      }
                       if (_searchQuery.isNotEmpty &&
                           !product.name
                               .toLowerCase()
@@ -122,28 +138,16 @@ class _ProductListPageState extends State<ProductListPage> {
           ),
         ],
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AddProductPage()),
-            );
-          },
-          backgroundColor: Colors.red,
-          label: const Text(
-            '상품등록',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          icon: const Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, AddProductPage.routeName);
+        },
+        // backgroundColor: Colors.red,
+        // foregroundColor: Colors.white,
+        shape: CircleBorder(),
+        child: Icon(
+          Icons.add,
+          size: 50,
         ),
       ),
     );
