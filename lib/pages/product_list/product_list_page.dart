@@ -16,10 +16,10 @@ class ProductListPage extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
-  _ProjectListPageState createState() => _ProjectListPageState();
+  _ProductListPageState createState() => _ProductListPageState();
 }
 
-class _ProjectListPageState extends State<ProductListPage> {
+class _ProductListPageState extends State<ProductListPage> {
   PhoneBrand? _selectedBrand;
   PhoneGrade? _selectedGrade;
   String _searchQuery = '';
